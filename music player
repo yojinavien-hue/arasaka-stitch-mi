@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARASAKA // STITCH_MIX</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        :root { --red: #ff003c; --cyan: #00f3ff; --black: #050505; }
+        body { background: var(--black); color: var(--red); font-family: monospace; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+        .app-shell { border: 1px solid var(--red); width: 85vw; max-width: 450px; padding: 40px; background: rgba(255, 0, 60, 0.02); box-shadow: 0 0 20px rgba(255, 0, 60, 0.1); }
+        .btn-stitch { background: transparent; color: var(--red); border: 1px solid var(--red); padding: 15px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        .btn-stitch:hover { background: var(--red); color: white; }
+        .status-box { color: var(--cyan); border: 1px solid var(--cyan); padding: 20px; text-align: center; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const CLIENT_ID = 'd8df6874ac1541efb5d3ec2abdf55ffd';
+        
+        // AUTO-DETECT: This uses whichever Netlify link you are currently on
+        const REDIRECT_URI = window.location.origin + '/'; 
+        const SCOPES = 'user-top-read';
+
+        function App() {
+            const [authorized, setAuthorized] = React.useState(false);
+
+            React.useEffect(() => {
+                const params = new URLSearchParams(window.location.search);
+                if (params.get('code')) {
+                    setAuthorized(true);
+                    window.history.replaceState({}, document.title, "/");
+                }
+            }, []);
+
+            const triggerSync = () => {
+                const authUrl = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}`;
+                window.location.href = authUrl;
+            };
+
+            return (
+                <div className="app-shell">
+                    <h1 style={{letterSpacing:'4px'}}>STITCH & MIX</h1>
+                    <p style={{fontSize:'10px'}}>STATUS: READY // LINK: AUTO</p>
+                    {!authorized ? (
+                        <button className="btn-stitch" onClick={triggerSync}>// INITIALIZE_SYNC</button>
+                    ) : (
+                        <div className="status-box">SYNC_COMPLETE</div>
+                    )}
+                </div>
+            );
+        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
